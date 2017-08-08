@@ -8,7 +8,7 @@
 	</div>
 	<div class="col-sm-7">
 		<a href="#" class="btn btn-primary pull-right">Nueva tarea</a>
-		<table class="table table-hover table-sprite">
+		<table class="table table-hover table-striped">
 			<thead>
 				<tr>
 					<th>ID</th>
@@ -26,7 +26,7 @@
 						<a href="#" class="btn btn-warning btn-sm">Editar</a>
 					</td>
 					<td width="10px">
-						<a href="#" class="btn btn-danger btn-sm">Eliminar</a>
+						<a href="#" class="btn btn-danger btn-sm" v-on:click.prevent="deleteKeep(keep)">Eliminar</a>
 					</td>
 				</tr>
 			</tbody>
