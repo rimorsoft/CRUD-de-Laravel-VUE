@@ -24386,6 +24386,7 @@ new Vue({
 	data: {
 		keeps: [],
 		newKeep: '',
+		fillKeep: {'id': '', 'keep': ''},
 		errors: []
 	},
 	methods: {
@@ -24393,6 +24394,23 @@ new Vue({
 			var urlKeeps = 'tasks';
 			axios.get(urlKeeps).then(response => {
 				this.keeps = response.data
+			});
+		},
+		editKeep: function(keep) {
+			this.fillKeep.id   = keep.id;
+			this.fillKeep.keep = keep.keep;
+			$('#edit').modal('show');
+		},
+		updateKeep: function(id) {
+			var url = 'tasks/' + id;
+			axios.put(url, this.fillKeep).then(response => {
+				this.getKeeps();
+				this.fillKeep = {'id': '', 'keep': ''};
+				this.errors	  = [];
+				$('#edit').modal('hide');
+				toastr.success('Tarea actualizada con éxito');
+			}).catch(error => {
+				this.errors = error.response.data
 			});
 		},
 		deleteKeep: function(keep) {
