@@ -68,115 +68,109 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__) {
 
-
+"use strict";
 new Vue({
-	el: '#crud',
-	created: function created() {
-		this.getKeeps();
-	},
-	data: {
-		keeps: [],
-		pagination: {
-			'total': 0,
-			'current_page': 0,
-			'per_page': 0,
-			'last_page': 0,
-			'from': 0,
-			'to': 0
-		},
-		newKeep: '',
-		fillKeep: { 'id': '', 'keep': '' },
-		errors: '',
-		offset: 3
-	},
-	computed: {
-		isActived: function isActived() {
-			return this.pagination.current_page;
-		},
-		pagesNumber: function pagesNumber() {
-			if (!this.pagination.to) {
-				return [];
-			}
+    name: 'Crud',
+    el: '#crud',
+    created: function created() {
+        this.getKeeps(1);
+    },
 
-			var from = this.pagination.current_page - this.offset;
-			if (from < 1) {
-				from = 1;
-			}
+    data: {
+        keeps: [],
+        pagination: {},
+        newKeep: '',
+        fillKeep: { id: '', keep: '' },
+        errors: '',
+        offset: 3
+    },
+    computed: {
+        isActived: function isActived() {
+            return this.pagination.current_page;
+        },
+        pagesNumber: function pagesNumber() {
+            if (!this.pagination.to) {
+                return [];
+            }
 
-			var to = from + this.offset * 2;
-			if (to >= this.pagination.last_page) {
-				to = this.pagination.last_page;
-			}
+            var from = this.pagination.current_page - this.offset;
+            if (from < 1) {
+                from = 1;
+            }
 
-			var pagesArray = [];
-			while (from <= to) {
-				pagesArray.push(from);
-				from++;
-			}
-			return pagesArray;
-		}
-	},
-	methods: {
-		getKeeps: function getKeeps(page) {
-			var _this = this;
+            var to = from + this.offset * 2;
+            if (to >= this.pagination.last_page) {
+                to = this.pagination.last_page;
+            }
 
-			var urlKeeps = 'tasks?page=' + page;
-			axios.get(urlKeeps).then(function (response) {
-				_this.keeps = response.data.tasks.data, _this.pagination = response.data.pagination;
-			});
-		},
-		editKeep: function editKeep(keep) {
-			this.fillKeep.id = keep.id;
-			this.fillKeep.keep = keep.keep;
-			$('#edit').modal('show');
-		},
-		updateKeep: function updateKeep(id) {
-			var _this2 = this;
+            var pagesArray = [];
+            while (from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
 
-			var url = 'tasks/' + id;
-			axios.put(url, this.fillKeep).then(function (response) {
-				_this2.getKeeps();
-				_this2.fillKeep = { 'id': '', 'keep': '' };
-				_this2.errors = [];
-				$('#edit').modal('hide');
-				toastr.success('Tarea actualizada con éxito');
-			}).catch(function (error) {
-				_this2.errors = 'Corrija para poder editar con éxito';
-			});
-		},
-		deleteKeep: function deleteKeep(keep) {
-			var _this3 = this;
+            return pagesArray;
+        }
+    },
+    methods: {
+        getKeeps: function getKeeps(page) {
+            var _this = this;
 
-			var url = 'tasks/' + keep.id;
-			axios.delete(url).then(function (response) {
-				//eliminamos
-				_this3.getKeeps(); //listamos
-				toastr.success('Eliminado correctamente'); //mensaje
-			});
-		},
-		createKeep: function createKeep() {
-			var _this4 = this;
+            axios.get('api/tasks?page=' + page).then(function (response) {
+                _this.keeps = response.data.tasks.data, _this.pagination = response.data.pagination;
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+        editKeep: function editKeep(keep) {
+            this.fillKeep.id = keep.id;
+            this.fillKeep.keep = keep.keep;
+            $('#edit').modal('show');
+        },
+        updateKeep: function updateKeep(id) {
+            var _this2 = this;
 
-			var url = 'tasks';
-			axios.post(url, {
-				keep: this.newKeep
-			}).then(function (response) {
-				_this4.getKeeps();
-				_this4.newKeep = '';
-				_this4.errors = [];
-				$('#create').modal('hide');
-				toastr.success('Nueva tarea creada con éxito');
-			}).catch(function (error) {
-				_this4.errors = 'Corrija para poder crear con éxito';
-			});
-		},
-		changePage: function changePage(page) {
-			this.pagination.current_page = page;
-			this.getKeeps(page);
-		}
-	}
+            axios.put('api/tasks/' + id, this.fillKeep).then(function (response) {
+                _this2.getKeeps();
+                _this2.fillKeep = { 'id': '', 'keep': '' };
+                _this2.errors = [];
+                $('#edit').modal('hide');
+                toastr.success(response.data.message);
+            }).catch(function (error) {
+                _this2.errors = 'Corrija para poder editar con éxito';
+            });
+        },
+        deleteKeep: function deleteKeep(keep) {
+            var _this3 = this;
+
+            axios.delete('api/tasks/' + keep.id).then(function (response) {
+                //eliminamos
+                _this3.getKeeps(); //listamos
+                toastr.success(response.data.message); //mensaje
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+        createKeep: function createKeep() {
+            var _this4 = this;
+
+            axios.post('api/tasks', { keep: this.newKeep }).then(function (response) {
+                _this4.getKeeps();
+                _this4.newKeep = '';
+                _this4.errors = [];
+                $('#create').modal('hide');
+                toastr.success(response.data.message);
+            }).catch(function (error) {
+                _this4.errors = 'Corrija para poder crear con éxito';
+            });
+        },
+        changePage: function changePage(page) {
+            this.pagination.current_page = page;
+            this.getKeeps(page);
+        }
+    }
 });
 
 /***/ }),

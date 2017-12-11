@@ -1,33 +1,30 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Task;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class TaskController extends Controller
+class TasksController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
+    public function index()
     {
         $tasks = Task::orderBy('id', 'DESC')->paginate(2);
 
         return [
             'pagination' => [
-                'total'         => $tasks->total(),
-                'current_page'  => $tasks->currentPage(),
-                'per_page'      => $tasks->perPage(),
-                'last_page'     => $tasks->lastPage(),
-                'from'          => $tasks->firstItem(),
-                'to'            => $tasks->lastItem(),
+                'total'        => $tasks->total(),
+                'current_page' => $tasks->currentPage(),
+                'per_page'     => $tasks->perPage(),
+                'last_page'    => $tasks->lastPage(),
+                'from'         => $tasks->firstItem(),
+                'to'           => $tasks->lastItem(),
             ],
             'tasks' => $tasks
         ];
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -43,7 +40,7 @@ class TaskController extends Controller
 
         Task::create($request->all());
 
-        return;
+        return response()->json(['message' => 'La tarea se creo correctamente']);
     }
 
     /**
@@ -61,7 +58,7 @@ class TaskController extends Controller
 
         Task::find($id)->update($request->all());
 
-        return;
+        return response()->json(['message' => 'La tarea se actualizo correctamente']);
     }
 
     /**
@@ -74,5 +71,7 @@ class TaskController extends Controller
     {
         $taks = Task::findOrFail($id);
         $taks->delete();
+
+        return response()->json(['message' => 'La tarea se elimino correctamente']);
     }
 }

@@ -11,8 +11,5 @@
 |
 */
 
-Route::get('/', function () {
-    return view('dashboard');
-});
+Route::get('/', 'TasksController@index');
 
-Route::resource('tasks', 'TaskController', ['except' => 'show', 'create', 'edit']);
